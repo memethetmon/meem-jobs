@@ -11,10 +11,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160328222347) do
+ActiveRecord::Schema.define(version: 20160328235850) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "applications", force: :cascade do |t|
+    t.integer  "seeker_id"
+    t.integer  "posting_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "applications", ["posting_id"], name: "index_applications_on_posting_id", using: :btree
+  add_index "applications", ["seeker_id"], name: "index_applications_on_seeker_id", using: :btree
+
+  create_table "bookmarks", force: :cascade do |t|
+    t.integer  "seeker_id"
+    t.integer  "posting_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "bookmarks", ["posting_id"], name: "index_bookmarks_on_posting_id", using: :btree
+  add_index "bookmarks", ["seeker_id"], name: "index_bookmarks_on_seeker_id", using: :btree
 
   create_table "employers", force: :cascade do |t|
     t.string   "name"
@@ -26,6 +46,18 @@ ActiveRecord::Schema.define(version: 20160328222347) do
     t.datetime "updated_at",      null: false
   end
 
+  create_table "postings", force: :cascade do |t|
+    t.string   "title"
+    t.text     "description"
+    t.text     "qualification"
+    t.string   "salary"
+    t.integer  "employer_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "postings", ["employer_id"], name: "index_postings_on_employer_id", using: :btree
+
   create_table "seekers", force: :cascade do |t|
     t.string   "name"
     t.string   "email"
@@ -34,4 +66,9 @@ ActiveRecord::Schema.define(version: 20160328222347) do
     t.datetime "updated_at",      null: false
   end
 
+  add_foreign_key "applications", "postings"
+  add_foreign_key "applications", "seekers"
+  add_foreign_key "bookmarks", "postings"
+  add_foreign_key "bookmarks", "seekers"
+  add_foreign_key "postings", "employers"
 end
